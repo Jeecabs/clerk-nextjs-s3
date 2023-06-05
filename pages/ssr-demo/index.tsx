@@ -1,31 +1,43 @@
 import styles from "/styles/Shared.module.css";
 import { clerkClient, getAuth, buildClerkProps } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
-import React from "react";
+import React, { useEffect } from "react";
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { User } from '@clerk/types';
 
-const mockGetPosts = (userId) => {
+type Post = {
+  title: string;
+  content: string;
+  userId: string;
+};
+
+const mockGetPosts = (userId: string): Promise<Post[]> => {
   return Promise.resolve([{ title: "An Example Post", content: "Hello from Clerk + Next.js", userId }]);
 };
 
-export const getServerSideProps = async ({ req, resolvedUrl }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, resolvedUrl }: GetServerSidePropsContext) => {
   const { userId } = getAuth(req);
-  const user = userId ? await clerkClient.users.getUser(userId) : null;
+  const user: User | null = userId ? await clerkClient.users.getUser(userId) : null;
 
   console.log("Auth state:", getAuth(req));
 
-  const posts = await mockGetPosts(userId);
+  const posts: Post[] = await mockGetPosts(userId);
   return { props: { ...buildClerkProps(req, { user }), posts } };
 };
 
-const SSRDemoPage = ({ posts }) => {
+type SSRDemoPageProps = {
+  posts: Post[];
+};
+
+const SSRDemoPage: React.FC<SSRDemoPageProps> = ({ posts }) => {
   const { isSignedIn, isLoaded, user } = useUser();
 
-  // Code hightlighting
-  React.useEffect(() => {
+  useEffect(() => {
     if (window.Prism) {
       window.Prism.highlightAll();
     }
-  });
+  }, []);
+
 
   return (
     <div className={styles.container}>
