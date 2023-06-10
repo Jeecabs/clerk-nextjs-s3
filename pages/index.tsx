@@ -2,6 +2,8 @@ import styles from "/styles/Shared.module.css";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import React from "react";
 import Link from "next/link";
+import Prism from 'prismjs';
+
 
 const ClerkFeatures = () => (
   <Link href="/user" className={styles.cardContent}>
@@ -129,11 +131,9 @@ const Main = () => (
 );
 
 const APIRequest = () => {
-  React.useEffect(() => {
-    if (window.Prism) {
-      window.Prism.highlightAll();
-    }
-  });
+  useEffect(() => {
+    Prism.highlightAll();
+}, []);
   const [response, setResponse] = React.useState("// Click above to run the request");
   const makeRequest = async () => {
     setResponse("// Loading...");

@@ -1,9 +1,8 @@
 import styles from "/styles/Shared.module.css";
-import { clerkClient, getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import { clerkClient, getAuth, buildClerkProps, User } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect } from "react";
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { User } from '@clerk/types';
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 type Post = {
   title: string;
@@ -21,8 +20,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, resolvedUrl 
 
   console.log("Auth state:", getAuth(req));
 
-  const posts: Post[] = await mockGetPosts(userId);
-  return { props: { ...buildClerkProps(req, { user }), posts } };
+  if (userId) {
+    const posts: Post[] = await mockGetPosts(userId);
+    return { props: { ...buildClerkProps(req, { user }), posts } };
+  } else {
+    return { props: { ...buildClerkProps(req, { user }) } };
+  }
 };
 
 type SSRDemoPageProps = {
@@ -37,7 +40,6 @@ const SSRDemoPage: React.FC<SSRDemoPageProps> = ({ posts }) => {
       window.Prism.highlightAll();
     }
   }, []);
-
 
   return (
     <div className={styles.container}>
