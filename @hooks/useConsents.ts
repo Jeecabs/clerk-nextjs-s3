@@ -1,5 +1,11 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { S3Client, ListObjectsV2Command, ListObjectsV2CommandOutput, CommonPrefix, Object as S3Object } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  ListObjectsV2Command,
+  ListObjectsV2CommandOutput,
+  CommonPrefix,
+  _Object as S3Object,
+} from "@aws-sdk/client-s3";
 
 // Interface for folder structure
 interface Folder {
@@ -44,7 +50,7 @@ const formatUrl = (path: string): string => `http://${process.env.BUCKET_NAME}/$
 const mapFolders = (prefix: string, commonPrefixes: CommonPrefix[] = []): Folder[] =>
   commonPrefixes
     .filter(({ Prefix }) => Prefix !== undefined && !excludeRegex.test(Prefix))
-    .map(({ Prefix = '' }) => ({
+    .map(({ Prefix = "" }) => ({
       name: Prefix.slice(prefix.length),
       path: Prefix,
       url: formatUrl(Prefix),
@@ -53,7 +59,7 @@ const mapFolders = (prefix: string, commonPrefixes: CommonPrefix[] = []): Folder
 const mapObjects = (prefix: string, contents: S3Object[] = []): Object[] =>
   contents
     .filter(({ Key }) => Key && !excludeRegex.test(Key))
-    .map(({ Key, LastModified, Size }) => ({
+    .map(({ Key = "", LastModified, Size }) => ({
       name: Key.slice(prefix.length),
       lastModified: LastModified,
       size: Size,
