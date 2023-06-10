@@ -4,9 +4,14 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import Head from "next/head";
 
 import Script from "next/script";
-import Layout from "/components/Layout";
 
-const MyApp = ({ Component, pageProps }) => {
+import 'prismjs/themes/prism.css';
+import Layout from "../components/Layout";
+
+const MyApp = ({ Component, pageProps }: {
+  Component: any,
+  pageProps: any
+}) => {
 
   return (
     <ClerkProvider {...pageProps}>
